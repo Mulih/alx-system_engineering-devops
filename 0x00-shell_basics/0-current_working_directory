@@ -1,2 +1,2 @@
 #!/bin/bash
-./examples/shell/absolute.sh
+pwd
