@@ -1,2 +1,2 @@
 #!/bin/bash
-ls -la . ../boot list all files/directories
+ls -la . ../boot
