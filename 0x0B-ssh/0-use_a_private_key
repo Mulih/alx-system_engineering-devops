@@ -1,3 +1,3 @@
 #!/bin/env bash
 # a Bash script that uses ssh to connect to your server using a private key
-ssh -i ~/.ssh/school ubuntu@34.224.6.201
+ssh -i ~/.ssh/school ubuntu@58.85.45.218
