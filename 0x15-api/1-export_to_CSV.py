@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """
-This is a module docstring
-This module export data in the CSV format.
+Python script, that using REST API, exports data in the CSV format.
 """
 import csv
 import json

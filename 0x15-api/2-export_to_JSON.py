@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
-This is a module docstring
-This module retrieves employee data from an API and saves it to a JSON file.
+Python script that, using REST API,
+retrieves employee data from an API and saves it to a JSON file.
 """
 
 import json
@@ -11,7 +11,7 @@ import sys
 def get_employee_status(employee_id):
     # Existing code of the function...
 
-if __name__ == "__main__":
+  if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python3 2-export_to_JSON.py <employee_id>")
         sys.exit(1)
