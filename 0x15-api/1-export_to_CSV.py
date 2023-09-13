@@ -1,9 +1,13 @@
 #!/usr/bin/python3
-
+"""
+This is a module docstring
+This module export data in the CSV format.
+"""
+import csv
 import json
 import requests
 import sys
-import csv
+
 
 def get_employee_status(employee_id):
 

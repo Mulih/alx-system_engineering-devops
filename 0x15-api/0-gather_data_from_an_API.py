@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-
+"""
+This is a module docstring
+This module using this REST API, for a given employee ID, 
+returns information about his/her TODO list progress.
+"""
 import json
 import requests
 import sys

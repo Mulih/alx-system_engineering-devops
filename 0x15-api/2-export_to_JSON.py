@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-
+"""
+This is a module docstring
+This module export data in the JSON format.
+"""
 import json
 import requests
 import sys
