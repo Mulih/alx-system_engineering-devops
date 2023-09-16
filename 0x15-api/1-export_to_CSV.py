@@ -1,51 +1,44 @@
 #!/usr/bin/python3
 """
-Python script, that using REST API, exports data in the CSV format.
+Check student .CSV output of user information
 """
+
 import csv
-import json
 import requests
 import sys
 
+users_url = "https://jsonplaceholder.typicode.com/users?id="
+todos_url = "https://jsonplaceholder.typicode.com/todos"
 
-def get_employee_status(employee_id):
 
-    # Using the requests module to make the http GET request
-    user_response = requests.get('https://jsonplaceholder.typicode.com/users/{}'.format(employee_id))
-    todos_response = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.format(employee_id))
+def user_info(id):
+    """ Check user information """
 
-    # Check the status code of the response to make sure the GET request was successful
-    if user_response.status_code != 200:
-        print("Failed to get the user data")
-        return
-    
-    if todos_response.status_code != 200:
-        print("Failed to get the todo data")
-        return
+    total_tasks = 0
+    response = requests.get(todos_url).json()
+    for i in response:
+        if i['userId'] == id:
+            total_tasks += 1
 
-    # Parse the response text into Python Dictionary
-    user_data = user_response.json()
-    todos_data = todos_response.json()
+    response = requests.get(users_url + str(id)).json()
+    username = response[0]['username']
 
-    # Getting the employee's name
-    employee_name = user_data['name']
+    flag = 0
+    with open(str(id) + ".csv", 'r') as f:
+        csv_reader = csv.reader(f, delimiter=',')
+        for row in csv_reader:
+            if not row:  # ignore empty lines
+                continue
+            if str(id) != row[0]:  # assuming User ID is the first field
+                print("User ID: Incorrect / ", end='')
+                flag = 1
+            if username != row[1]:  # assuming Username is the second field
+                print("Username: Incorrect")
+                flag = 1
 
-    # Prepare data for CSV
-    data_for_csv = []
-    for task in todos_data:
-        data_for_csv.append([employee_id, employee_name, task['completed'], task['title']])
-    
-    # Write data to CSV file
-    with open('{}.csv'.format(employee_id), 'w', newline='') as file:
-        writer = csv.writer(file, quoting=csv.QUOTE_ALL)
-        writer.writerows(data_for_csv)
+    if flag == 0:
+        print("User ID and Username: OK")
 
-    return
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 2:
-        print("Please provide the employee id as a command line argument")
-        print("Usage: python3 script.py [EMPLOYEE_ID]")
-    else:
-        get_employee_status(sys.argv[1])
+    user_info(int(sys.argv[1]))
