@@ -1,51 +1,55 @@
 #!/usr/bin/python3
 """
-Python script, that using REST API, exports data in the CSV format.
+Python script that, using REST API, exports data in the CSV format.
 """
 import csv
-import json
 import requests
 import sys
 
+# Endpoints
+USERS_URL = 'https://jsonplaceholder.typicode.com/users'
+TODOS_URL = 'https://jsonplaceholder.typicode.com/todos'
+
 
 def get_employee_status(employee_id):
+    """
+    Gather employee status from REST API and store it in CSV format.
+    """
 
-    # Using the requests module to make the http GET request
-    user_response = requests.get('https://jsonplaceholder.typicode.com/users/{}'.format(employee_id))
-    todos_response = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.format(employee_id))
+    # Retrieve user information
+    user_response = requests.get(USERS_URL, params={'id': employee_id})
 
-    # Check the status code of the response to make sure the GET request was successful
+    # Verify if the request was successful
     if user_response.status_code != 200:
-        print("Failed to get the user data")
-        return
-    
-    if todos_response.status_code != 200:
-        print("Failed to get the todo data")
+        print('Failed to get the user data')
         return
 
-    # Parse the response text into Python Dictionary
+    # Retrieve todos for the user
+    todos_response = requests.get(TODOS_URL, params={'userId': employee_id})
+
+    if todos_response.status_code != 200:
+        print('Failed to get the todo data')
+        return
+
+    # Parse the response data
     user_data = user_response.json()
     todos_data = todos_response.json()
 
-    # Getting the employee's name
-    employee_name = user_data['name']
+    # Store user name
+    employee_name = user_data[0]['username']
 
-    # Prepare data for CSV
-    data_for_csv = []
-    for task in todos_data:
-        data_for_csv.append([employee_id, employee_name, task['completed'], task['title']])
-    
-    # Write data to CSV file
-    with open('{}.csv'.format(employee_id), 'w', newline='') as file:
-        writer = csv.writer(file, quoting=csv.QUOTE_ALL)
-        writer.writerows(data_for_csv)
+    with open(f'{employee_id}.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
 
-    return
+        for task in todos_data:
+            writer.writerow([str(employee_id), employee_name,
+                            task['completed'], task['title']])
+
 
 if __name__ == "__main__":
-
     if len(sys.argv) < 2:
-        print("Please provide the employee id as a command line argument")
-        print("Usage: python3 script.py [EMPLOYEE_ID]")
+        print('Please provide the employee id as a command line argument')
+        print('Usage: python3 script.py [EMPLOYEE_ID]')
     else:
-        get_employee_status(sys.argv[1])
+        # Translate the string argument to integer
+        get_employee_status(int(sys.argv[1]))
