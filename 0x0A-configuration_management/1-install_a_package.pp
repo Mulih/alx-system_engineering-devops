@@ -1,6 +1,5 @@
 # Installs puppet-lint
 
-package { 'puppet-lint':
-  ensure   => '2.1.1',
-  provider => 'gem',
+exec { 'install flask':
+  command => '/usr/bin/pip3 install flask version==2.1.0'
 }
