@@ -15,7 +15,7 @@ def main():
     api_url = "https://jsonplaceholder.typicode.com/"
     all_employees_tasks = {}
 
-    for USER_ID in range(1, 11):  # Replace with the range of employee IDs you require
+    for USER_ID in range(1, 11):  
         employee_todo = requests.get(api_url + f"users/{USER_ID}/todos").json()
         employee = requests.get(api_url + f"users/{USER_ID}").json()
 

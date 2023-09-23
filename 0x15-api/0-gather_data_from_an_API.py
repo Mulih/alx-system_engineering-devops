@@ -10,7 +10,8 @@ import sys
 def get_employee_status(employee_id):
 
     # Using the requests module to make the http GET request
-    user_response = requests.get('https://jsonplaceholder.typicode.com/users/{}'.format(employee_id))
+    user_response = requests.get('https://jsonplaceholder.typicode.com/users/{}'
+                                .format(employee_id))
     todos_response = requests.get('https://jsonplaceholder.typicode.com/todos?userId={}'.format(employee_id))
 
     # Check the status code of the response to make sure the GET request was successful
