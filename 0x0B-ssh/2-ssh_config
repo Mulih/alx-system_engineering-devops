@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Custom client configuration file
 
-Host  54.90.15.4
+Host  100.26.236.166
   IdentityFile ~/.ssh/school
   PasswordAuthentication no
