@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
-# Fixes a web server to run Nginx as the www-data user listening on port 8080.
-sed -i "s/#user www-data/user www-data/" /etc/nginx/nginx.conf
-sed -i "s/80/8080/g" /etc/nginx/sites-available/default
+# Run Nginx as Nginx User
+
 chmod 644 /etc/nginx/nginx.conf
 pkill apache2
-sudo -u www-data service nginx restart
+
+if ! id -u nginx >/dev/null 2>&1; then
+	echo "Creating nginx user.."
+	sudo useradd -s /bin/false nginx
+fi
+
+sudo service nginx stop
+sudo sed -i '/^user /c\user nginx;' /etc/nginx/nginx.conf
+sudo sed -i 's/listen 80/listen 8080;/g' /etc/nginx/sites-available/default
+
+sudo -u nginx service nginx start
