@@ -1,21 +1,37 @@
 #!/usr/bin/env bash
-# configures a new HAproxy as a load balancer
+# 
+# Configure Nginx so that its HTTP response contains
+# a custom header
+#
 
-# Install HAproxy on a server
-apt-get -y update
-apt-get -y install haproxy=1.6.\*
+# Update packages
+sudo apt update
 
-# Configure haproxy configuration file to distribute requests using a roundrobin algorithm
-echo '
-frontend sammykingx.tech
-        bind 0:80
-        default_backend web_servers
+# Add HAProxy PPA
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:vbernat/haproxy-1.8 -y
+sudo apt update
 
-backend web_servers
-        balance roundrobin
-        server 64820-web-01 100.26.152.157:80
-        server 64820-web-02 52.86.102.6:80
-' >> /etc/haproxy/haproxy.cfg
+# Install HAProxy
+sudo apt install -y haproxy=1.8.\*
 
-# Restart HAproxy service
-service haproxy restart
+hgproxy_conf_file="/etc/haproxy/haproxy.cfg"
+
+# Configure Load Balancer
+fname="frontend http"
+fbind="bind *:80"
+fmode="mode http"
+fdefault="default_backend web-backend"
+frontend="$fname\n\t$fbind\n\t$fmode\n\t$fdefault\n"
+
+bname="backend web-backend"
+bbalance="balance roundrobin"
+bserver1="server web1 35.229.93.37:80 check"
+bserver2="server web2 54.196.213.127:80 check"
+backend="$bname\n\t$bbalance\n\t$bserver1\n\t$bserver2"
+
+sudo sed -i "$ a $frontend" $hgproxy_conf_file
+sudo sed -i "$ a $backend" $hgproxy_conf_file
+
+# Restart HAProxy
+sudo service haproxy restart
