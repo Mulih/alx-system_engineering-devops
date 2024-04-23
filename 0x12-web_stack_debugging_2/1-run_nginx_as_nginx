@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
-# Run Nginx as Nginx User
+# Run nginx as the nginx user
 
-chmod 644 /etc/nginx/nginx.conf
+# Stop Apache processes
 pkill apache2
 
-if ! id -u nginx >/dev/null 2>&1; then
-	echo "Creating nginx user.."
-	sudo useradd -s /bin/false nginx
+# If port 80 for IPv4 is being listened to, it is changed to port 8080
+if grep -q "listen 80" /etc/nginx/sites-available/default ; then
+    sed -i "s/listen 80/listen 8080/" /etc/nginx/sites-available/default
 fi
 
-sudo service nginx stop
-sudo sed -i '/^user /c\user nginx;' /etc/nginx/nginx.conf
-sudo sed -i 's/listen 80/listen 8080;/g' /etc/nginx/sites-available/default
+# If port 80 for IPv6 is being listened to, it is changed to port 8080
+if grep -q "listen \[::\]:80" /etc/nginx/sites-available/default ; then
+    sed -i "s/listen \[::\]:80/listen \[::\]:8080/" /etc/nginx/sites-available/default
+fi
 
-sudo -u nginx service nginx start
+# Update Nginx settings file owner and group
+chown nginx:nginx /etc/nginx/nginx.conf
+
+# Update Nginx settings file permissions
+chmod 0644 /etc/nginx/nginx.conf
+
+# Start the nginx service as the nginx user
+su nginx -c "service nginx start"
